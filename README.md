@@ -1,3 +1,12 @@
+# You can Directly run the application either from the hosted netlify link in the repository or to host the application on local follow these steps: -
+
+1. Copy the code using the github link
+2. Install all the packages using command "npm install"
+3. Use the command to run the project - "npm start"
+4. Go to the the url - "http://localhost:3000/" to use the project
+5. Or you can access the netlify deployed version from the link on right section
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
