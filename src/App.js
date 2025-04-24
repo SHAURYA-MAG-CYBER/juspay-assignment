@@ -109,7 +109,7 @@ function Playground({ actionsToPerform, setActions, currActionBlock, setCurrActi
           {block.inputs.map((input) => (
             <input
               key={input}
-              type={input == "text" ? "text" : "number"}
+              type={input === "text" ? "text" : "number"}
               placeholder={input}
               value={block.values[input] || ""}
               onChange={(e) => handleChange(idx, input, e.target.value)}
@@ -202,7 +202,7 @@ function PlayButton({ actionBlock, allobjects, activeObjects, setAllobjects }) {
     async function executeBlockSequence(blocks, currentPos, currentAngle, objId) {
       const nonrepeatedsteps = []
       for (const block of blocks) {
-        if (block.type != "repeat") { nonrepeatedsteps.push(block)}
+        if (block.type !== "repeat") { nonrepeatedsteps.push(block)}
       }
       for (const block of blocks) {
         if (block.type === "move") {
@@ -235,6 +235,7 @@ function PlayButton({ actionBlock, allobjects, activeObjects, setAllobjects }) {
           await delay(time);
           updateMessage(objId, null, null);
         }
+        // eslint-disable-next-line no-loop-func
         setAllobjects((prev) =>
           prev.map((obj) =>
             obj.id === objId
@@ -358,7 +359,6 @@ function AvailableObjects( {allobjects, setAllobjects, activeObjects, setActiveO
 }
 
 function App() {
-  const [blocks, setBlocks] = useState([]);
   const [allobjects, setAllobjects] = useState([availableItems[0]]);
   const [activeObjects, setActiveObjects] = useState([availableItems[0].id]);
   const [actionsToPerform, setActions] = useState([[]]);
