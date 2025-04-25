@@ -455,7 +455,7 @@ function App() {
   const [activeObjects, setActiveObjects] = useState([availableItems[0].id]);
   const [actionsToPerform, setActions] = useState([[]]);
   const [currActionBlock, setCurrActionBlock] = useState(0);
-  const [collisions, setCollisions] = useState([]);
+  // const [collisions, setCollisions] = useState([]);
 
 
   return (
