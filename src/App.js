@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Draggable from "react-draggable";
 import "./index.css";
 
+
+
 const movements = [
   { type: "move", label: "Move", inputs: ["steps"] },
   { type: "turn", label: "Turn", inputs: ["degrees"] },
@@ -197,6 +199,13 @@ function PlayButton({ actionBlock, allobjects, activeObjects, setAllobjects }) {
           obj.id === id ? { ...obj, message: text, messageType: type } : obj
         )
       );
+      setTimeout(() => {
+        setAllobjects((prev) =>
+          prev.map((obj) =>
+            obj.id === id ? { ...obj, message: "" } : obj
+          )
+        );
+      }, 1000);
     }
 
     async function executeBlockSequence(blocks, currentPos, currentAngle, objId) {
@@ -293,6 +302,89 @@ function PlayButton({ actionBlock, allobjects, activeObjects, setAllobjects }) {
   );
 }
 
+function HeroButton({allobjects, activeObjects, setAllobjects}) {
+  async function runAnimation() {
+    const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+    let previousA = { left: 300, top: 200 };
+    let previousB = { left: 800, top: 200 };
+
+    setAllobjects((prev) =>
+      prev.map((obj) => {
+        if (obj.id === 1) return { ...obj, position: { ...previousA } };
+        if (obj.id === 2) return { ...obj, position: { ...previousB } };
+        return obj;
+      })
+    );
+
+    for (let j = 0; j < 10; j++) {
+      await delay(80);
+
+      let nextA = null;
+      let nextB = null;
+
+      setAllobjects((prev) => {
+        return prev.map((obj) => {
+          if (obj.id === 1) {
+            nextA = { ...obj.position, left: obj.position.left + 25 };
+            return { ...obj, position: nextA };
+          } else if (obj.id === 2) {
+            nextB = { ...obj.position, left: obj.position.left - 25 };
+            return { ...obj, position: nextB };
+          } else {
+            return obj;
+          }
+        });
+      });
+      await delay(80);
+      if (checkCollision(nextA, nextB)) {
+        console.log("collision");
+        const firePos = {
+          left: (nextA.left + nextB.left) / 2,
+          top: (nextA.top + nextB.top) / 2,
+        };
+        setAllobjects((prev) => [
+          ...prev,
+          {
+            id: "fire",
+            type: "emoji",
+            content: "💥",
+            position: firePos,
+          },
+        ]);
+      
+        await delay(800);
+        // eslint-disable-next-line no-loop-func
+        setAllobjects((prev) =>
+          prev.filter((obj) => obj.id !== "fire").map((obj) => {
+            if (obj.id === 1) return { ...obj, position: { ...previousA } };
+            if (obj.id === 2) return { ...obj, position: { ...previousB } };
+            return obj;
+          })
+        );
+        break;
+      } else {
+        previousA = nextA;
+        previousB = nextB;
+      }
+    }
+
+ 
+  }
+      
+  return (
+    <div>
+      <button
+        onClick={runAnimation}
+        className="mt-4 ml-4 px-4 py-2 bg-green-600 text-white rounded"
+      >
+        Hero Action
+      </button>
+    </div>
+  );
+}
+
+
 function AvailableObjects( {allobjects, setAllobjects, activeObjects, setActiveObjects, setActions}) {
   return (
     <div className="flex gap-4 flex-wrap p-4 bg-gray-100">
@@ -363,6 +455,8 @@ function App() {
   const [activeObjects, setActiveObjects] = useState([availableItems[0].id]);
   const [actionsToPerform, setActions] = useState([[]]);
   const [currActionBlock, setCurrActionBlock] = useState(0);
+  const [collisions, setCollisions] = useState([]);
+
 
   return (
     <div className="flex">
@@ -386,6 +480,7 @@ function App() {
           ))}
         </div>
         <PlayButton actionBlock={actionsToPerform} allobjects={allobjects} activeObjects={activeObjects} setAllobjects={setAllobjects}/>
+        <HeroButton actionBlock={actionsToPerform} allobjects={allobjects} activeObjects={activeObjects} setAllobjects={setAllobjects} className="mb-5"/>
         <AvailableObjects allobjects= {allobjects} setAllobjects={setAllobjects} activeObjects={activeObjects} setActiveObjects={setActiveObjects} setActions={setActions}/>
       </div>
     </div>
